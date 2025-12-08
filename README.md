@@ -98,8 +98,10 @@ This is part of the overarching [XCommerce](https://github.com/oiraqi/xcommerce)
 **Starting point**
 - Clone this repository
 - cd final
-- ./gradlew build
-- There you go!
+
+Build with Maven (recommended):
+- mvn clean package
+- Run the app: mvn spring-boot:run
 
 **You need to install Docker, then run these commands**
 - docker pull redis
