@@ -14,8 +14,6 @@ import java.util.List;
 @Entity
 public class Product extends BaseEntity {
 
-    private static final long serialVersionUID = 730736845770996539L;
-
     @NotNull
     private String barcode;
 
@@ -47,7 +45,7 @@ public class Product extends BaseEntity {
     private int quantity;
     private float weight;
 
-    protected Product() {
+    public Product() {
     }
 
     public Product(String name, String barcode, Brand brand, Category category, float price, int quantity,

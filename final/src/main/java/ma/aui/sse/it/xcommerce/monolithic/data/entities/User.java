@@ -1,9 +1,10 @@
 package ma.aui.sse.it.xcommerce.monolithic.data.entities;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
  *
@@ -12,8 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Entity
 @Table(name = "\"user\"")
 public class User extends BaseEntity {
-
-    private static final long serialVersionUID = -2323571384056059081L;
 
     @NotNull
     protected String username;

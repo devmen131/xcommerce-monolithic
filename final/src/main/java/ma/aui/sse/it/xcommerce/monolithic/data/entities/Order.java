@@ -1,18 +1,8 @@
 package ma.aui.sse.it.xcommerce.monolithic.data.entities;
 
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Iterator;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-
-import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ShoppingCart;
+import java.util.List;
 
 /**
  *
@@ -21,8 +11,6 @@ import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ShoppingCart;
 @Entity
 @Table(name = "\"order\"")
 public class Order extends BaseEntity {
-
-    private static final long serialVersionUID = 3959935433240472748L;
 
     @ManyToOne
     @NotNull
@@ -36,21 +24,7 @@ public class Order extends BaseEntity {
     protected float shippingCost;
     protected static final float TAX_RATE = (float) 0.2;
 
-    protected Order() {
-    }
-
-    public Order(ShoppingCart shoppingCart, User user) {
-        this.user = user;
-        if (shoppingCart.getSelectedProducts() != null) {
-            Iterator<Entry<Product, Integer>> it = shoppingCart.getSelectedProducts().entrySet().iterator();
-            while (it.hasNext()) {
-                Entry<Product, Integer> e = it.next();
-                new OrderLine(this, e.getKey(), e.getValue());
-            }
-        }
-        productsTotalPrice = shoppingCart.getProductsTotalPrice();
-        shippingCost = shoppingCart.getShippingCost();
-        status = OrderStatus.HANDLING;
+    public Order() {
     }
 
     public void updateStatus(OrderStatus newStatus) throws IllegalStatusChangeException {
@@ -58,6 +32,14 @@ public class Order extends BaseEntity {
             throw new IllegalStatusChangeException(newStatus);
         status = newStatus;
         // use JavaMail API to send a notification to the customer by email
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
     }
 
     public User getUser() {

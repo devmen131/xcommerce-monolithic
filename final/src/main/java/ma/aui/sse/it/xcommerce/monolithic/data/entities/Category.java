@@ -1,12 +1,8 @@
 package ma.aui.sse.it.xcommerce.monolithic.data.entities;
 
-import java.util.List;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  *
@@ -14,8 +10,6 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 public class Category extends BaseEntity {
-
-    private static final long serialVersionUID = 512632343574588379L;
 
     @NotNull
     private String name; // read-only

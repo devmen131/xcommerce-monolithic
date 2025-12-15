@@ -1,12 +1,11 @@
 package ma.aui.sse.it.xcommerce.monolithic.data.entities;
 
-import java.util.List;
-
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  *
@@ -14,8 +13,6 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 public class Brand extends BaseEntity {
-
-    private static final long serialVersionUID = -7014503160098567776L;
 
     @NotNull
     private String name;

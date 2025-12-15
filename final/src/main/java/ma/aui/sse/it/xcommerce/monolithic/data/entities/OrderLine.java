@@ -2,7 +2,6 @@ package ma.aui.sse.it.xcommerce.monolithic.data.entities;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-
 import javax.validation.constraints.NotNull;
 
 /**
@@ -11,8 +10,6 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 public class OrderLine extends BaseEntity {
-
-    private static final long serialVersionUID = -2465717954068251960L;
 
     @ManyToOne
     @NotNull
@@ -63,4 +60,11 @@ public class OrderLine extends BaseEntity {
         return unitPrice;
     }
 
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
 }

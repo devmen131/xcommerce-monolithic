@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ma.aui.sse.it.xcommerce.monolithic.data.dtos.User;
+import ma.aui.sse.it.xcommerce.monolithic.data.dtos.UserDto;
 import ma.aui.sse.it.xcommerce.monolithic.security.JwtHelper;
 import ma.aui.sse.it.xcommerce.monolithic.services.UserService;
 
@@ -26,14 +26,14 @@ public class UserRestController {
     UserService userService;
 
     @PostMapping("/authenticate")
-    public String authenticate(@RequestBody User dto) {        
+    public String authenticate(@RequestBody UserDto dto) {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword()));
         return JwtHelper.generateToken(authentication);
     }
 
     @PostMapping("/admin")
-    public boolean createAdmin(@RequestBody User dto) {
+    public boolean createAdmin(@RequestBody UserDto dto) {
         if (!check(dto))
             return false;
 
@@ -43,7 +43,7 @@ public class UserRestController {
     }
 
     @PostMapping
-    public boolean createUser(@RequestBody User dto) {
+    public boolean createUser(@RequestBody UserDto dto) {
         if (!check(dto))
             return false;
 
@@ -53,18 +53,18 @@ public class UserRestController {
     }
 
     @PatchMapping("/{userId}")
-    public User update(@PathVariable("userId") long userId, @RequestBody User dto) {
+    public UserDto update(@PathVariable("userId") long userId, @RequestBody UserDto dto) {
         if (userId < 1)
             throw new RuntimeException();
 
         userService.update(userId, dto.getPassword(), dto.getNewPassword(), dto.getFirstName(), dto.getLastName(),
                 dto.getEmailAddress(), dto.getAddress());
 
-        return new User(dto.getUsername(), null, dto.getFirstName(), dto.getLastName(), dto.getEmailAddress(),
+        return new UserDto(dto.getUsername(), null, dto.getFirstName(), dto.getLastName(), dto.getEmailAddress(),
                 dto.getAddress());
     }
 
-    private boolean check(User dto) {
+    private boolean check(UserDto dto) {
         return (dto.getUsername() != null && dto.getPassword() != null && dto.getFirstName() != null
                 && dto.getLastName() != null && dto.getEmailAddress() != null && dto.getAddress() != null);
     }

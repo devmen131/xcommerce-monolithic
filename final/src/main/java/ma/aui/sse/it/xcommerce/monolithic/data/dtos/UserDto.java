@@ -2,7 +2,7 @@ package ma.aui.sse.it.xcommerce.monolithic.data.dtos;
 
 import java.io.Serializable;
 
-public class User implements Serializable{
+public class UserDto implements Serializable{
 
     private static final long serialVersionUID = -2789798823602463949L;
     private Long id;
@@ -15,10 +15,10 @@ public class User implements Serializable{
     private String address;
 
 
-    protected User() { }
+    protected UserDto() { }
 
-    public User(String username, String password, String firstName, String lastName,
-                String emailAddress, String address){
+    public UserDto(String username, String password, String firstName, String lastName,
+                   String emailAddress, String address){
         this.username = username;
         this.password = password;
         this.firstName = firstName;

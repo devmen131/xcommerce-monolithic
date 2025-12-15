@@ -1,14 +1,12 @@
 package ma.aui.sse.it.xcommerce.monolithic.data.entities;
 
+import io.micrometer.core.lang.NonNull;
+
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
-import io.micrometer.core.lang.NonNull;
-
 @Entity
 public class Authority extends BaseEntity {
-
-    private static final long serialVersionUID = 1L;
 
     @NonNull
     private String username;

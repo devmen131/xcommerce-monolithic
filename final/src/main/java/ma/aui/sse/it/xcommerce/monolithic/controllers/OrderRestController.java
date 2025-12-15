@@ -1,16 +1,16 @@
 package ma.aui.sse.it.xcommerce.monolithic.controllers;
 
-import org.springframework.web.bind.annotation.RestController;
+import ma.aui.sse.it.xcommerce.monolithic.data.dtos.OrderDto;
+import ma.aui.sse.it.xcommerce.monolithic.data.entities.OrderStatus;
+import ma.aui.sse.it.xcommerce.monolithic.mapper.OrderMapper;
+import ma.aui.sse.it.xcommerce.monolithic.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
-import ma.aui.sse.it.xcommerce.monolithic.data.entities.Order;
-import ma.aui.sse.it.xcommerce.monolithic.data.entities.OrderStatus;
-import ma.aui.sse.it.xcommerce.monolithic.services.OrderService;
 
 /**
  *
@@ -23,9 +23,8 @@ public class OrderRestController {
     @Autowired
     private OrderService orderService;
 
-
     @GetMapping("/list")
-    public List<Order> getOrdersByCustomer() {
+    public List<OrderDto> getOrdersByCustomer() {
         //Retrieve customerId from JWT
         long customerId = 1; //To be removed
         return orderService.getOrdersByCustomer(customerId);
@@ -39,7 +38,7 @@ public class OrderRestController {
     }
 
     @GetMapping("/backOffice/list")
-    public List<Order> getOrdersByCustomer(@RequestParam long customerId) {
+    public List<OrderDto> getOrdersByCustomer(@RequestParam long customerId) {
         return orderService.getOrdersByCustomer(customerId);
     }
 
