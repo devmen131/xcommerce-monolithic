@@ -29,7 +29,6 @@ public class ShoppingCartRestController {
         //Retrieve userId from JWT-based security context
         //auth.getPrinciple()
         long userId = 1; //To be removed
-        System.out.println(shoppingCartService);
         return shoppingCartService.getShoppingCart(userId);
     }
 
