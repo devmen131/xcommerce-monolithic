@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>ma.aui.sse.it.xcommerce</groupId>
-    <artifactId>monolithic-final</artifactId>
+    <artifactId>xcommerce-monolithic</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>monolithic-final</name>
+    <name>xcommerce-monolithic</name>
     <description>XCommerce SOA Monolithic - Spring Boot</description>
     <packaging>jar</packaging>
 

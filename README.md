@@ -53,45 +53,45 @@ This is part of the overarching [XCommerce](https://github.com/oiraqi/xcommerce)
 ## Architecture
 - **Physical Architecture - Initial**
 <p align="center">
-  <img src="final/architecture/architecture1.png">
+  <img src="architecture/architecture1.png">
 </p>
 
 - **Physical Architecture - Protocols & Software**
 <p align="center">
-  <img src="final/architecture/architecture1b.png">
+  <img src="architecture/architecture1b.png">
 </p>
 
 - **Physical Architecture - Resilient (No SPoF) / Scalable**
 <p align="center">
-  <img src="final/architecture/architecture2.png">
+  <img src="architecture/architecture2.png">
 </p>
 
 - **Logical Architecture - Inside an Application Server**
 <p align="center">
-  <img src="final/architecture/architecture3.png">
+  <img src="architecture/architecture3.png">
 </p>
 
 ## Design
 ### Class Diagrams
 - **Entity Class Diagram**
 <p align="center">
-  <img src="final/design/class-diagrams/EntityClassDiagram.png">
+  <img src="design/class-diagrams/EntityClassDiagram.png">
 </p>
 
 - **Repositories and Services Class Diagram**
 <p align="center">
-  <img src="final/design/class-diagrams/RepositoriesServicesClassDiagram.png">
+  <img src="design/class-diagrams/RepositoriesServicesClassDiagram.png">
 </p>
 
 ### Sequence Diagrams
 - **Data-driven Sequence Diagram**
 <p align="center">
-  <img src="final/design/sequence-diagrams/DataDrivenSequenceDiagram.png">
+  <img src="design/sequence-diagrams/DataDrivenSequenceDiagram.png">
 </p>
 
 - **Service-driven Sequence Diagram**
 <p align="center">
-  <img src="final/design/sequence-diagrams/ServiceDrivenSequenceDiagram.png">
+  <img src="design/sequence-diagrams/ServiceDrivenSequenceDiagram.png">
 </p>
 
 ## Development
