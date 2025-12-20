@@ -1,5 +1,10 @@
 package ma.aui.sse.it.xcommerce.monolithic.controllers;
 
+import ma.aui.sse.it.xcommerce.monolithic.data.dtos.UserDto;
+import ma.aui.sse.it.xcommerce.monolithic.security.JwtHelper;
+import ma.aui.sse.it.xcommerce.monolithic.services.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,13 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ma.aui.sse.it.xcommerce.monolithic.data.dtos.UserDto;
-import ma.aui.sse.it.xcommerce.monolithic.security.JwtHelper;
-import ma.aui.sse.it.xcommerce.monolithic.services.UserService;
-
 @RestController
 @RequestMapping("/rest/user")
 public class UserRestController {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UserRestController.class);
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -27,6 +30,8 @@ public class UserRestController {
 
     @PostMapping("/authenticate")
     public String authenticate(@RequestBody UserDto dto) {
+        String username = dto != null ? dto.getUsername() : null;
+        LOG.debug("authenticate : username={}", username);
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword()));
         return JwtHelper.generateToken(authentication);
@@ -34,6 +39,8 @@ public class UserRestController {
 
     @PostMapping("/admin")
     public boolean createAdmin(@RequestBody UserDto dto) {
+        String username = dto != null ? dto.getUsername() : null;
+        LOG.debug("createAdmin : username={}", username);
         if (!check(dto))
             return false;
 
@@ -44,6 +51,8 @@ public class UserRestController {
 
     @PostMapping
     public boolean createUser(@RequestBody UserDto dto) {
+        String username = dto != null ? dto.getUsername() : null;
+        LOG.debug("createUser : username={}", username);
         if (!check(dto))
             return false;
 
@@ -54,6 +63,9 @@ public class UserRestController {
 
     @PatchMapping("/{userId}")
     public UserDto update(@PathVariable("userId") long userId, @RequestBody UserDto dto) {
+        String username = dto != null ? dto.getUsername() : null;
+        String email = dto != null ? dto.getEmailAddress() : null;
+        LOG.debug("update : userId={}, username={}, email={}", userId, username, email);
         if (userId < 1)
             throw new RuntimeException();
 

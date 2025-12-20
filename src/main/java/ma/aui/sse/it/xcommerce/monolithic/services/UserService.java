@@ -1,16 +1,21 @@
 package ma.aui.sse.it.xcommerce.monolithic.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import ma.aui.sse.it.xcommerce.monolithic.data.entities.Authority;
 import ma.aui.sse.it.xcommerce.monolithic.data.entities.User;
 import ma.aui.sse.it.xcommerce.monolithic.data.repositories.AuthorityRepository;
 import ma.aui.sse.it.xcommerce.monolithic.data.repositories.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
 
 @Service
 public class UserService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     UserRepository userRepository;
@@ -20,6 +25,7 @@ public class UserService {
 
     public boolean createSuperAdmin(String username, String password, String firstName, String lastName,
             String emailAddress, String address) {
+        LOG.debug("Creation d'un super admin (username={}, email={})", username, emailAddress);
 
         if (!authorityRepository.findByAuthority("ROLE_SUPERADMIN").isEmpty())
             return false;
@@ -31,6 +37,7 @@ public class UserService {
 
     public void createAdmin(String username, String password, String firstName, String lastName, String emailAddress,
             String address) {
+        LOG.debug("Creation d'un admin (username={}, email={})", username, emailAddress);
 
         String[] authorities = { "ROLE_ADMIN", "ROLE_USER" };
         create(username, password, firstName, lastName, emailAddress, address, authorities);
@@ -38,6 +45,7 @@ public class UserService {
 
     public void createUser(String username, String password, String firstName, String lastName, String emailAddress,
             String address) {
+        LOG.debug("Creation d'un utilisateur (username={}, email={})", username, emailAddress);
 
         String[] authorities = { "ROLE_USER" };
         create(username, password, firstName, lastName, emailAddress, address, authorities);
@@ -45,6 +53,8 @@ public class UserService {
 
     private void create(String username, String password, String firstName, String lastName, String emailAddress,
             String address, String[] authorities) {
+        LOG.debug("Creation de compte (username={}, email={}, authorities={})", username, emailAddress,
+                  authorities != null ? Arrays.toString(authorities) : null);
 
         User user = new User(username, password, firstName, lastName, emailAddress, address);
         userRepository.save(user);
@@ -56,6 +66,9 @@ public class UserService {
 
     public void update(long userId, String password, String newPassword, String firstName, String lastName,
             String emailAddress, String address) {
+        LOG.debug("Mise a jour utilisateur {} (nouveauMotDePasse={}, prenom={}, nom={}, email={}, adresse={})",
+                  userId, newPassword != null, firstName != null, lastName != null, emailAddress != null,
+                  address != null);
         User user = userRepository.findById(userId).get();
         if (password != null && (newPassword == null
                 || !(new BCryptPasswordEncoder().encode(password).equals(user.getPassword())))) {

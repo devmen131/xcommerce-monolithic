@@ -1,10 +1,10 @@
-# XCommerce – Modernisation (branche `legacy-sb-2.1.x`)
+# XCommerce – Modernisation (branche `legacy-sb-2.7.x`)
 
 ## 1. Contexte
 
-Cette branche (`legacy-sb-2.1.x`) traite XCommerce comme un **monolithe legacy Spring Boot 2.1.x** :
+Cette branche (`legacy-sb-2.7.x`) traite XCommerce comme un **monolithe legacy Spring Boot 2.7.x** :
 
-- Stack : Spring Boot 2.1.x, PostgreSQL, Redis, Spring Data JPA.
+- Stack : Spring Boot 2.7.x (migration OpenRewrite depuis 2.1.x), PostgreSQL, Redis, Spring Data JPA.
 - Objectif : utiliser ce projet comme **terrain d’entraînement** pour moderniser une application existante (stabilisation, sécurisation, refactoring, préparation de migration).
 
 ---
@@ -32,6 +32,7 @@ Avant modernisation, les principaux constats étaient :
 - **Environnement & tests**
     - Ajout d’un `docker-compose.yml` (PostgreSQL + Redis).
     - Mise en place de tests d’intégration avec MockMvc.
+    - Migration Spring Boot 2.7 via **OpenRewrite** + correctifs de compatibilité Spring Security.
 
 - **API & sécurité des données**
     - Remplacement de l’exposition directe des entités par des **DTO REST**.
@@ -47,3 +48,5 @@ Avant modernisation, les principaux constats étaient :
 - **Structure du projet**
     - Simplification de la structure Maven (POM et sources à la racine du repository).
 
+- **Observabilité & logs**
+    - Ajout de logs SLF4J et ajustement du niveau de logging à DEBUG pour améliorer la traçabilité

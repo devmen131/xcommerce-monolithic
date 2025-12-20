@@ -5,6 +5,8 @@ import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ShoppingCartDto;
 import ma.aui.sse.it.xcommerce.monolithic.data.entities.Product;
 import ma.aui.sse.it.xcommerce.monolithic.data.repositories.ProductRepository;
 import ma.aui.sse.it.xcommerce.monolithic.mapper.ProductMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,6 +22,8 @@ import java.util.Map;
 @Service
 public class ShoppingCartService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ShoppingCartService.class);
+
     @Autowired
     private ProductRepository productRepository;
 
@@ -28,11 +32,14 @@ public class ShoppingCartService {
     
     @Cacheable(value = "ShoppingCartDto")
     public ShoppingCartDto getShoppingCart(long userId) {
+        LOG.debug("Lecture du panier de l'utilisateur {}", userId);
         return new ShoppingCartDto();
     }
 
     @CachePut(value = "ShoppingCartDto", key = "#userId")
     public ShoppingCartDto addProduct(ShoppingCartDto shoppingCartDto, long userId, long productId, int quantity) {
+        LOG.debug("Ajout du produit {} dans le panier de l'utilisateur {} (quantite={}, panierNull={})", productId, userId,
+                  quantity, shoppingCartDto == null);
         Product product = productRepository.findById(productId)
                                            .get();
         ProductDto productDto = productMapper.toProductDto(product);
@@ -42,6 +49,8 @@ public class ShoppingCartService {
 
     @CachePut(value = "ShoppingCartDto", key = "#userId")
     public ShoppingCartDto decreaseProductQuantity(ShoppingCartDto shoppingCartDto, long userId, long productId, int quantity) {
+        LOG.debug("Diminution de quantite du produit {} dans le panier de l'utilisateur {} (quantite={}, panierNull={})",
+                  productId, userId, quantity, shoppingCartDto == null);
         Product product = productRepository.findById(productId)
                                            .get();
         ProductDto productDto = productMapper.toProductDto(product);
@@ -51,6 +60,8 @@ public class ShoppingCartService {
 
     @CachePut(value = "ShoppingCartDto", key = "#userId")
     public ShoppingCartDto removeProduct(ShoppingCartDto shoppingCartDto, long userId, long productId) {
+        LOG.debug("Suppression du produit {} du panier de l'utilisateur {} (panierNull={})", productId, userId,
+                  shoppingCartDto == null);
         Product product = productRepository.findById(productId)
                                            .get();
         ProductDto productDto = productMapper.toProductDto(product);
@@ -60,6 +71,7 @@ public class ShoppingCartService {
 
     @CachePut(value = "ShoppingCartDto", key = "#userId")
     public ShoppingCartDto empty(ShoppingCartDto shoppingCartDto, long userId) {
+        LOG.debug("Vidage du panier de l'utilisateur {} (panierNull={})", userId, shoppingCartDto == null);
         shoppingCartDto.empty();
         return shoppingCartDto;
     }
