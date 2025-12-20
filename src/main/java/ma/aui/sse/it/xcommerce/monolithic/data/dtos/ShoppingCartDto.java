@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import ma.aui.sse.it.xcommerce.monolithic.utils.jackson.ProductDtoKeyDeserializer;
 import ma.aui.sse.it.xcommerce.monolithic.utils.jackson.ProductDtoKeySerializer;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Hashtable;
 
@@ -18,6 +19,7 @@ import java.util.Hashtable;
 @JsonIgnoreProperties(value = {"totalPrice", "isEmpty", "empty"}, allowGetters = true)
 public class ShoppingCartDto implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1718078099996510259L;
     @JsonDeserialize(keyUsing = ProductDtoKeyDeserializer.class)
     @JsonSerialize(keyUsing = ProductDtoKeySerializer.class)

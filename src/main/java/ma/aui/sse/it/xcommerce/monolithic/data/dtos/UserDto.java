@@ -1,9 +1,11 @@
 package ma.aui.sse.it.xcommerce.monolithic.data.dtos;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class UserDto implements Serializable{
 
+    @Serial
     private static final long serialVersionUID = -2789798823602463949L;
     private Long id;
     private String username;

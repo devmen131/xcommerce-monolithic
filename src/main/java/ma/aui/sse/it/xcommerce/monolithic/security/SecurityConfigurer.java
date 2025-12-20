@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,17 +26,19 @@ public class SecurityConfigurer {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf()
-            .disable()
+        http.csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                    .antMatchers("/rest/user/admin")
+                    .requestMatchers("/rest/user/admin")
                     .hasRole("SUPERADMIN")
-                    .antMatchers("/rest/user/authenticate")
+                    .requestMatchers("/rest/user/authenticate")
                     .permitAll()
-                    .antMatchers(HttpMethod.GET, "/rest/catalog/**")
+                    .requestMatchers(HttpMethod.GET, "/rest/catalog/**")
                     .permitAll()
-                    .antMatchers("/rest/catalog/**")
+                    .requestMatchers("/rest/catalog/**")
                     .hasRole("ADMIN")
+                    .anyRequest()
+                    //Permit All pour toutes les urls restantes (sb 3.0 par default toutes les url sont sécurisé)
+                    .permitAll()
             )
             .addFilterBefore(new JwtInterceptingFilter(), UsernamePasswordAuthenticationFilter.class)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

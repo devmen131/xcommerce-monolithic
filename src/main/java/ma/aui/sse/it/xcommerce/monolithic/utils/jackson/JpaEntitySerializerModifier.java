@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import org.springframework.util.ClassUtils;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 public class JpaEntitySerializerModifier extends BeanSerializerModifier {
 
