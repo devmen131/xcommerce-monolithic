@@ -1,33 +1,19 @@
 package ma.aui.sse.it.xcommerce.monolithic;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.OrderDto;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ProductCartDto;
+import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ProductDto;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ShoppingCartDto;
 import ma.aui.sse.it.xcommerce.monolithic.data.entities.OrderStatus;
-import ma.aui.sse.it.xcommerce.monolithic.data.entities.Product;
-import ma.aui.sse.it.xcommerce.monolithic.data.repositories.ProductRepository;
-import ma.aui.sse.it.xcommerce.monolithic.services.OrderService;
-import ma.aui.sse.it.xcommerce.monolithic.services.ShoppingCartService;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class CheckoutTestsIT extends AbstractTestIT {
-
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private ShoppingCartService shoppingCartService;
-
-    @Autowired
-    private OrderService orderService;
 
     @Test
     public void givenTwoProducts_whenCheckout_thenOrderCreatedAndCartCleared() throws Exception {
@@ -45,13 +31,7 @@ public class CheckoutTestsIT extends AbstractTestIT {
                .andExpect(status().isOk());
 
         //Then
-        String response = mockMvc.perform(get("/rest/order/list"))
-                                 .andExpect(status().isOk())
-                                 .andReturn()
-                                 .getResponse()
-                                 .getContentAsString();
-
-        List<OrderDto> orderList = objectMapper.readValue(response, new TypeReference<List<OrderDto>>() {});
+        List<OrderDto> orderList = getOrdersByCustomer(USER_ID);
 
         assertNotNull(orderList);
         assertEquals(1, orderList.size());
@@ -60,17 +40,17 @@ public class CheckoutTestsIT extends AbstractTestIT {
         assertEquals(2, order.getOrderLines()
                              .size());
         assertEquals(OrderStatus.HANDLING.name(), order.getStatus());
-        Product productIphoneX = productRepository.findById(PRODUCT_ID_IPHONE_X)
-                                                  .orElse(null);
-        Product productS10 = productRepository.findById(PRODUCT_ID_S10)
-                                              .orElse(null);
+
+        ProductDto productIphoneX = getProductDto(PRODUCT_ID_IPHONE_X);
+        ProductDto productS10 = getProductDto(PRODUCT_ID_S10);
+
         assertNotNull(productIphoneX);
         assertNotNull(productS10);
         float exceptedPrice = productIphoneX.getPrice() + productS10.getPrice();
         assertEquals(exceptedPrice, order.getProductsTotalPrice(), 0.01);
         assertEquals(400f, order.getShippingCost(), 0.01);
 
-        ShoppingCartDto shoppingCartDto = shoppingCartService.getShoppingCart(1);
+        ShoppingCartDto shoppingCartDto = getShoppingCartDto();
         assertNotNull(shoppingCartDto);
         assertTrue(shoppingCartDto.isEmpty());
     }
@@ -83,7 +63,7 @@ public class CheckoutTestsIT extends AbstractTestIT {
                .andExpect(status().isOk());
 
         //Then
-        List<OrderDto> orderDtoList = orderService.getOrdersByCustomer(1);
+        List<OrderDto> orderDtoList = getOrdersByCustomer(USER_ID);
         assertNotNull(orderDtoList);
         assertTrue(orderDtoList.isEmpty());
     }

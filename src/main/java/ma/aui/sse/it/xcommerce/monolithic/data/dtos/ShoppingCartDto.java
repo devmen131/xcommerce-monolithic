@@ -1,6 +1,12 @@
 package ma.aui.sse.it.xcommerce.monolithic.data.dtos;
 
 
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import ma.aui.sse.it.xcommerce.monolithic.utils.jackson.ProductDtoKeyDeserializer;
+import ma.aui.sse.it.xcommerce.monolithic.utils.jackson.ProductDtoKeySerializer;
+
 import java.io.Serializable;
 import java.util.Hashtable;
 
@@ -9,9 +15,12 @@ import java.util.Hashtable;
  *
  * @author Omar IRAQI
  */
+@JsonIgnoreProperties(value = {"totalPrice", "isEmpty", "empty"}, allowGetters = true)
 public class ShoppingCartDto implements Serializable {
 
     private static final long serialVersionUID = 1718078099996510259L;
+    @JsonDeserialize(keyUsing = ProductDtoKeyDeserializer.class)
+    @JsonSerialize(keyUsing = ProductDtoKeySerializer.class)
     private Hashtable<ProductDto, Integer> selectedProducts;
     private float productsTotalPrice;
     private float shippingCost;
@@ -39,6 +48,7 @@ public class ShoppingCartDto implements Serializable {
         return productsTotalPrice == 0;
     }
 
+    @JsonIgnore
     public void empty() {
         selectedProducts = new Hashtable<>();
         productsTotalPrice = 0;
@@ -60,4 +70,5 @@ public class ShoppingCartDto implements Serializable {
     public Hashtable<ProductDto, Integer> getSelectedProducts() {
         return selectedProducts;
     }
+
 }

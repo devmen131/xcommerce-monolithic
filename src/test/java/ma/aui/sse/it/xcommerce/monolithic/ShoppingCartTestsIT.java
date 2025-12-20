@@ -3,9 +3,7 @@ package ma.aui.sse.it.xcommerce.monolithic;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ProductCartDto;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ProductDto;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ShoppingCartDto;
-import ma.aui.sse.it.xcommerce.monolithic.services.ShoppingCartService;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import static org.junit.Assert.*;
@@ -13,9 +11,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ShoppingCartTestsIT extends AbstractTestIT {
-
-    @Autowired
-    private ShoppingCartService shoppingCartService;
 
     @Test
     public void givenOneProduct_WhenAddToCart_thenNumberOfProductIsOne() throws Exception {
@@ -27,7 +22,7 @@ public class ShoppingCartTestsIT extends AbstractTestIT {
                 .andExpect(status().isOk());
 
         //Then
-        ShoppingCartDto shoppingCartDto = shoppingCartService.getShoppingCart(1);
+        ShoppingCartDto shoppingCartDto = getShoppingCartDto();
         assertNotNull(shoppingCartDto);
         assertEquals(1, shoppingCartDto.getSelectedProducts()
                                        .size());
@@ -47,7 +42,7 @@ public class ShoppingCartTestsIT extends AbstractTestIT {
                 .andExpect(status().isOk());
 
         //Then
-        ShoppingCartDto shoppingCartDto = shoppingCartService.getShoppingCart(1);
+        ShoppingCartDto shoppingCartDto = getShoppingCartDto();
         assertNotNull(shoppingCartDto);
         assertEquals(2, shoppingCartDto.getSelectedProducts()
                                        .size());
@@ -86,7 +81,7 @@ public class ShoppingCartTestsIT extends AbstractTestIT {
                .andExpect(status().isOk());
 
         //Then
-        ShoppingCartDto shoppingCartDto = shoppingCartService.getShoppingCart(1);
+        ShoppingCartDto shoppingCartDto = getShoppingCartDto();
         assertNotNull(shoppingCartDto);
         assertNotNull(shoppingCartDto.getSelectedProducts());
         assertEquals(1, shoppingCartDto.getSelectedProducts()
@@ -110,7 +105,7 @@ public class ShoppingCartTestsIT extends AbstractTestIT {
                 .andExpect(status().isOk());
 
         //Then
-        ShoppingCartDto shoppingCartDto = shoppingCartService.getShoppingCart(1);
+        ShoppingCartDto shoppingCartDto = getShoppingCartDto();
         assertNotNull(shoppingCartDto);
         assertEquals(1, shoppingCartDto.getSelectedProducts()
                                        .size());
@@ -135,7 +130,7 @@ public class ShoppingCartTestsIT extends AbstractTestIT {
                        .content(convertToJson(productCartDtoS10)))
                .andExpect(status().isOk());
 
-        ShoppingCartDto shoppingCartDto = shoppingCartService.getShoppingCart(1);
+        ShoppingCartDto shoppingCartDto = getShoppingCartDto();
         assertNotNull(shoppingCartDto);
         ProductDto productDto = findProductInCart(shoppingCartDto, productCartDtoS10.getId());
         assertEquals(1, shoppingCartDto.getSelectedProducts()
@@ -155,7 +150,7 @@ public class ShoppingCartTestsIT extends AbstractTestIT {
                        .content(convertToJson(productCartDtoS10)))
                .andExpect(status().isOk());
 
-        ShoppingCartDto shoppingCartDto = shoppingCartService.getShoppingCart(1);
+        ShoppingCartDto shoppingCartDto = getShoppingCartDto();
         assertNotNull(shoppingCartDto);
         assertTrue(shoppingCartDto.getSelectedProducts()
                                   .isEmpty());

@@ -15,6 +15,9 @@ public class ProductDto implements Serializable {
     private int quantity;
     private float weight;
 
+    public ProductDto() {
+    }
+
     public ProductDto(Long id, String barcode, String name, String description, String image, float price, float discount, int quantity, float weight) {
         this.id = id;
         this.barcode = barcode;
@@ -25,6 +28,10 @@ public class ProductDto implements Serializable {
         this.discount = discount;
         this.quantity = quantity;
         this.weight = weight;
+    }
+
+    public ProductDto(Long id) {
+        this.id = id;
     }
 
     public Long getId() {
