@@ -5,14 +5,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.OrderDto;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ProductDto;
 import ma.aui.sse.it.xcommerce.monolithic.data.entities.*;
 import ma.aui.sse.it.xcommerce.monolithic.mapper.OrderMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ShoppingCartDto;
 import ma.aui.sse.it.xcommerce.monolithic.data.repositories.UserRepository;
@@ -22,21 +22,21 @@ import ma.aui.sse.it.xcommerce.monolithic.data.repositories.OrderRepository;
  *
  * @author Omar IRAQI
  */
-@Service
+@ApplicationScoped
 public class OrderService {
 
     private static final Logger LOG = LoggerFactory.getLogger(OrderService.class);
 
-    @Autowired
+    @Inject
     private OrderRepository orderRepository;
 
-    @Autowired
+    @Inject
     private UserRepository userRepository;
 
-    @Autowired
+    @Inject
     private ShoppingCartService shoppingCartService;
 
-    @Autowired
+    @Inject
     private OrderMapper orderMapper;
 
     public List<OrderDto> getOrdersByCustomer(long customerId) {

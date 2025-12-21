@@ -1,26 +1,26 @@
 package ma.aui.sse.it.xcommerce.monolithic.services;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import ma.aui.sse.it.xcommerce.monolithic.data.entities.Authority;
 import ma.aui.sse.it.xcommerce.monolithic.data.entities.User;
 import ma.aui.sse.it.xcommerce.monolithic.data.repositories.AuthorityRepository;
 import ma.aui.sse.it.xcommerce.monolithic.data.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
+import io.quarkus.elytron.security.common.BcryptUtil;
 
 import java.util.Arrays;
 
-@Service
+@ApplicationScoped
 public class UserService {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
 
-    @Autowired
+    @Inject
     UserRepository userRepository;
 
-    @Autowired
+    @Inject
     AuthorityRepository authorityRepository;
 
     public boolean createSuperAdmin(String username, String password, String firstName, String lastName,
@@ -70,13 +70,12 @@ public class UserService {
                   userId, newPassword != null, firstName != null, lastName != null, emailAddress != null,
                   address != null);
         User user = userRepository.findById(userId).get();
-        if (password != null && (newPassword == null
-                || !(new BCryptPasswordEncoder().encode(password).equals(user.getPassword())))) {
+        if (password != null && (newPassword == null || !BcryptUtil.matches(password, user.getPassword()))) {
             return;
         }
 
         if (newPassword != null)
-            user.setPassword(new BCryptPasswordEncoder().encode(newPassword));
+            user.setPassword(BcryptUtil.bcryptHash(newPassword));
         if (firstName != null)
             user.setFirstName(firstName);
         if (lastName != null)

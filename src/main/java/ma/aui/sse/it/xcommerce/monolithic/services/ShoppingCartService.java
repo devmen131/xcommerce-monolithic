@@ -1,5 +1,7 @@
 package ma.aui.sse.it.xcommerce.monolithic.services;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ProductDto;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ShoppingCartDto;
 import ma.aui.sse.it.xcommerce.monolithic.data.entities.Product;
@@ -7,10 +9,8 @@ import ma.aui.sse.it.xcommerce.monolithic.data.repositories.ProductRepository;
 import ma.aui.sse.it.xcommerce.monolithic.mapper.ProductMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -19,15 +19,15 @@ import java.util.Map;
  *
  * @author Omar IRAQI
  */
-@Service
+@ApplicationScoped
 public class ShoppingCartService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ShoppingCartService.class);
 
-    @Autowired
+    @Inject
     private ProductRepository productRepository;
 
-    @Autowired
+    @Inject
     private ProductMapper productMapper;
     
     @Cacheable(value = "ShoppingCartDto")

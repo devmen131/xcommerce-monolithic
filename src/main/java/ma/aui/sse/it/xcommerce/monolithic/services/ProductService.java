@@ -1,15 +1,15 @@
 package ma.aui.sse.it.xcommerce.monolithic.services;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ProductDto;
 import ma.aui.sse.it.xcommerce.monolithic.data.repositories.ProductRepository;
 import ma.aui.sse.it.xcommerce.monolithic.mapper.ProductMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service
+@ApplicationScoped
 public class ProductService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProductService.class);

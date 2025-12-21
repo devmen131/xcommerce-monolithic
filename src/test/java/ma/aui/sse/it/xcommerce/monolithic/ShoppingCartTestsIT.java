@@ -3,13 +3,14 @@ package ma.aui.sse.it.xcommerce.monolithic;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ProductCartDto;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ProductDto;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ShoppingCartDto;
+import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static io.restassured.RestAssured.given;
+import static io.restassured.http.ContentType.JSON;
 
+@QuarkusTest
 public class ShoppingCartTestsIT extends AbstractTestIT {
 
     @Test
@@ -19,7 +20,7 @@ public class ShoppingCartTestsIT extends AbstractTestIT {
 
         //When
         addProduct(productCartDtoIphoneX)
-                .andExpect(status().isOk());
+                .statusCode(200);
 
         //Then
         ShoppingCartDto shoppingCartDto = getShoppingCartDto();
@@ -37,9 +38,9 @@ public class ShoppingCartTestsIT extends AbstractTestIT {
 
         //When
         addProduct(productCartDtoIphoneX)
-                .andExpect(status().isOk());
+                .statusCode(200);
         addProduct(productCartDtoS10)
-                .andExpect(status().isOk());
+                .statusCode(200);
 
         //Then
         ShoppingCartDto shoppingCartDto = getShoppingCartDto();
@@ -69,16 +70,19 @@ public class ShoppingCartTestsIT extends AbstractTestIT {
         ProductCartDto productCartDtoS10 = getProductCartDtoS10(1);
 
         addProduct(productCartDtoIphoneX)
-                .andExpect(status().isOk());
+                .statusCode(200);
         addProduct(productCartDtoS10)
-                .andExpect(status().isOk());
+                .statusCode(200);
 
         //When
-        mockMvc.perform(patch("/rest/shoppingCart/removeProduct")
-                       .accept(MediaType.APPLICATION_JSON)
-                       .contentType(MediaType.APPLICATION_JSON)
-                       .content(convertToJson(productCartDtoS10)))
-               .andExpect(status().isOk());
+        given()
+                .contentType(JSON)
+                .accept(JSON)
+                .body(convertToJson(productCartDtoS10))
+                .when()
+                .patch("/rest/shoppingCart/removeProduct")
+                .then()
+                .statusCode(200);
 
         //Then
         ShoppingCartDto shoppingCartDto = getShoppingCartDto();
@@ -99,10 +103,10 @@ public class ShoppingCartTestsIT extends AbstractTestIT {
 
         //When
         addProduct(productCartDtoS10)
-                .andExpect(status().isOk());
+                .statusCode(200);
         productCartDtoS10.setQuantity(2);
         addProduct(productCartDtoS10)
-                .andExpect(status().isOk());
+                .statusCode(200);
 
         //Then
         ShoppingCartDto shoppingCartDto = getShoppingCartDto();
@@ -121,14 +125,17 @@ public class ShoppingCartTestsIT extends AbstractTestIT {
     public void givenProductWithTwoQuantity_WhenDecrease_thenQuantityIsOne() throws Exception {
 
         ProductCartDto productCartDtoS10 = getProductCartDtoS10(2);
-        addProduct(productCartDtoS10).andExpect(status().isOk());
+        addProduct(productCartDtoS10).statusCode(200);
 
         productCartDtoS10.setQuantity(1);
-        mockMvc.perform(patch("/rest/shoppingCart/decreaseProductQuantity")
-                       .contentType(MediaType.APPLICATION_JSON)
-                       .accept(MediaType.APPLICATION_JSON)
-                       .content(convertToJson(productCartDtoS10)))
-               .andExpect(status().isOk());
+        given()
+                .contentType(JSON)
+                .accept(JSON)
+                .body(convertToJson(productCartDtoS10))
+                .when()
+                .patch("/rest/shoppingCart/decreaseProductQuantity")
+                .then()
+                .statusCode(200);
 
         ShoppingCartDto shoppingCartDto = getShoppingCartDto();
         assertNotNull(shoppingCartDto);
@@ -142,13 +149,16 @@ public class ShoppingCartTestsIT extends AbstractTestIT {
     public void givenProductWithOneQuantity_WhenDecrease_thenCartIsEmpty() throws Exception {
 
         ProductCartDto productCartDtoS10 = getProductCartDtoS10(1);
-        addProduct(productCartDtoS10).andExpect(status().isOk());
+        addProduct(productCartDtoS10).statusCode(200);
 
-        mockMvc.perform(patch("/rest/shoppingCart/decreaseProductQuantity")
-                       .contentType(MediaType.APPLICATION_JSON)
-                       .accept(MediaType.APPLICATION_JSON)
-                       .content(convertToJson(productCartDtoS10)))
-               .andExpect(status().isOk());
+        given()
+                .contentType(JSON)
+                .accept(JSON)
+                .body(convertToJson(productCartDtoS10))
+                .when()
+                .patch("/rest/shoppingCart/decreaseProductQuantity")
+                .then()
+                .statusCode(200);
 
         ShoppingCartDto shoppingCartDto = getShoppingCartDto();
         assertNotNull(shoppingCartDto);

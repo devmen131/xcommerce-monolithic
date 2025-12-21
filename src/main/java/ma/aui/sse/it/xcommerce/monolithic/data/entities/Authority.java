@@ -1,14 +1,12 @@
 package ma.aui.sse.it.xcommerce.monolithic.data.entities;
 
-import io.micrometer.core.lang.NonNull;
-
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Authority extends BaseEntity {
 
-    @NonNull
+    @NotNull
     private String username;
 
     @NotNull

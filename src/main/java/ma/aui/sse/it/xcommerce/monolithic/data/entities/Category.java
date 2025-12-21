@@ -15,6 +15,7 @@ public class Category extends BaseEntity {
     private String name; // read-only
 
     @ManyToOne
+    @JoinColumn(name = "parent_category_id")
     private Category parentCategory;
 
     @OneToMany(mappedBy = "parentCategory", fetch = FetchType.LAZY)

@@ -8,15 +8,15 @@ package ma.aui.sse.it.xcommerce.monolithic.data.repositories;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import ma.aui.sse.it.xcommerce.monolithic.data.entities.Product;
+import org.springframework.stereotype.Repository;
 
 /**
  *
  * @author Omar IRAQI
  */
-@RepositoryRestResource
+@Repository
 public interface ProductRepository extends BaseRepository<Product> {
         
         @Query("select p from Product p where p.name like %?1%")

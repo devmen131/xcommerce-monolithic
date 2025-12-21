@@ -1,44 +1,64 @@
 package ma.aui.sse.it.xcommerce.monolithic.controllers;
 
+import jakarta.inject.Inject;
+import jakarta.ws.rs.PATCH;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
+import java.util.Set;
+import java.util.stream.Collectors;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.UserDto;
+import ma.aui.sse.it.xcommerce.monolithic.data.entities.Authority;
+import ma.aui.sse.it.xcommerce.monolithic.data.entities.User;
+import ma.aui.sse.it.xcommerce.monolithic.data.repositories.AuthorityRepository;
+import ma.aui.sse.it.xcommerce.monolithic.data.repositories.UserRepository;
 import ma.aui.sse.it.xcommerce.monolithic.security.JwtHelper;
 import ma.aui.sse.it.xcommerce.monolithic.services.UserService;
+import io.quarkus.elytron.security.common.BcryptUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/rest/user")
+@Path("/rest/user")
 public class UserRestController {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserRestController.class);
 
-    @Autowired
-    AuthenticationManager authenticationManager;
+    @Inject
+    UserRepository userRepository;
 
-    @Autowired
+    @Inject
+    AuthorityRepository authorityRepository;
+
+    @Inject
     UserService userService;
 
-    @PostMapping("/authenticate")
-    public String authenticate(@RequestBody UserDto dto) {
+    @POST
+    @Path("/authenticate")
+    @PermitAll
+    public String authenticate(UserDto dto) {
         String username = dto != null ? dto.getUsername() : null;
         LOG.debug("authenticate : username={}", username);
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword()));
-        return JwtHelper.generateToken(authentication);
+        if (dto == null || dto.getUsername() == null || dto.getPassword() == null) {
+            throw new WebApplicationException("Missing credentials", Response.Status.BAD_REQUEST);
+        }
+        User user = userRepository.findByUsername(username);
+        if (user == null || !BcryptUtil.matches(dto.getPassword(), user.getPassword())) {
+            throw new WebApplicationException("Invalid credentials", Response.Status.UNAUTHORIZED);
+        }
+        Set<String> roles = authorityRepository.findByUsername(username).stream()
+                .map(Authority::getAuthority)
+                .collect(Collectors.toSet());
+        return JwtHelper.generateToken(username, roles);
     }
 
-    @PostMapping("/admin")
-    public boolean createAdmin(@RequestBody UserDto dto) {
+    @POST
+    @Path("/admin")
+    @RolesAllowed("ROLE_SUPERADMIN")
+    public boolean createAdmin(UserDto dto) {
         String username = dto != null ? dto.getUsername() : null;
         LOG.debug("createAdmin : username={}", username);
         if (!check(dto))
@@ -49,8 +69,9 @@ public class UserRestController {
         return true;
     }
 
-    @PostMapping
-    public boolean createUser(@RequestBody UserDto dto) {
+    @POST
+    @PermitAll
+    public boolean createUser(UserDto dto) {
         String username = dto != null ? dto.getUsername() : null;
         LOG.debug("createUser : username={}", username);
         if (!check(dto))
@@ -61,8 +82,9 @@ public class UserRestController {
         return true;
     }
 
-    @PatchMapping("/{userId}")
-    public UserDto update(@PathVariable("userId") long userId, @RequestBody UserDto dto) {
+    @PATCH
+    @Path("/{userId}")
+    public UserDto update(@PathParam("userId") long userId, UserDto dto) {
         String username = dto != null ? dto.getUsername() : null;
         String email = dto != null ? dto.getEmailAddress() : null;
         LOG.debug("update : userId={}, username={}, email={}", userId, username, email);

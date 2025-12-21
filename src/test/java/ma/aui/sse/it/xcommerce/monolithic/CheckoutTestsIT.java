@@ -5,14 +5,15 @@ import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ProductCartDto;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ProductDto;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ShoppingCartDto;
 import ma.aui.sse.it.xcommerce.monolithic.data.entities.OrderStatus;
+import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static io.restassured.RestAssured.given;
 
+@QuarkusTest
 public class CheckoutTestsIT extends AbstractTestIT {
 
     @Test
@@ -22,13 +23,16 @@ public class CheckoutTestsIT extends AbstractTestIT {
         final ProductCartDto productCartDtoS10 = getProductCartDtoS10(1);
 
         addProduct(productCartDtoIphoneX)
-                .andExpect(status().isOk());
+                .statusCode(200);
         addProduct(productCartDtoS10)
-                .andExpect(status().isOk());
+                .statusCode(200);
 
         //When
-        mockMvc.perform(get("/rest/order/checkout"))
-               .andExpect(status().isOk());
+        given()
+                .when()
+                .get("/rest/order/checkout")
+                .then()
+                .statusCode(200);
 
         //Then
         List<OrderDto> orderList = getOrdersByCustomer(USER_ID);
@@ -59,8 +63,11 @@ public class CheckoutTestsIT extends AbstractTestIT {
     public void givenEmptyCart_whenCheckout_thenOrderListIsEmpty() throws Exception {
         //Given Empty Cart
         //When
-        mockMvc.perform(get("/rest/order/checkout"))
-               .andExpect(status().isOk());
+        given()
+                .when()
+                .get("/rest/order/checkout")
+                .then()
+                .statusCode(200);
 
         //Then
         List<OrderDto> orderDtoList = getOrdersByCustomer(USER_ID);

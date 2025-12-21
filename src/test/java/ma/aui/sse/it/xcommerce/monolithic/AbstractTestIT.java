@@ -4,35 +4,22 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import io.quarkus.redis.client.RedisClient;
+import io.restassured.http.ContentType;
+import io.restassured.response.ValidatableResponse;
+import jakarta.inject.Inject;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.OrderDto;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ProductCartDto;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ProductDto;
 import ma.aui.sse.it.xcommerce.monolithic.data.dtos.ShoppingCartDto;
-import ma.aui.sse.it.xcommerce.monolithic.services.ShoppingCartService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.CacheManager;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.http.MediaType;
-import org.springframework.lang.NonNull;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static io.restassured.RestAssured.given;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-@Transactional
 public abstract class AbstractTestIT {
 
     public static final int USER_ID = 1;
@@ -42,14 +29,8 @@ public abstract class AbstractTestIT {
     private final ObjectWriter writer = objectMapper.writer()
                                                     .withDefaultPrettyPrinter();
 
-    @Autowired
-    protected StringRedisTemplate stringRedisTemplate;
-
-    @Autowired
-    MockMvc mockMvc;
-
-    @Autowired
-    private ShoppingCartService shoppingCartService;
+    @Inject
+    RedisClient redisClient;
 
     protected static ProductCartDto getProductCartDtoIphoneX(int quantity) {
         return getProductCartDto(PRODUCT_ID_IPHONE_X, quantity);
@@ -73,47 +54,55 @@ public abstract class AbstractTestIT {
     }
 
     private void clearCache() {
-        stringRedisTemplate.keys("*")
-                           .forEach(s -> stringRedisTemplate.delete(s));
+        redisClient.flushdb(Collections.emptyList());
     }
 
     protected String convertToJson(Object object) throws JsonProcessingException {
         return writer.writeValueAsString(object);
     }
 
-    protected ResultActions addProduct(ProductCartDto productCartDtoIphoneX) throws Exception {
-        return mockMvc.perform(patch("/rest/shoppingCart/addProduct")
-                .content(convertToJson(productCartDtoIphoneX))
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON));
+    protected ValidatableResponse addProduct(ProductCartDto productCartDto) throws Exception {
+        return given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(convertToJson(productCartDto))
+                .when()
+                .patch("/rest/shoppingCart/addProduct")
+                .then();
     }
 
     protected ProductDto getProductDto(long productId) throws Exception {
-        String productStr = mockMvc.perform(get("/rest/product/" + productId))
-                                   .andExpect(status().isOk())
-                                   .andReturn()
-                                   .getResponse()
-                                   .getContentAsString();
+        String productStr = given()
+                .when()
+                .get("/rest/product/" + productId)
+                .then()
+                .statusCode(200)
+                .extract()
+                .asString();
         return objectMapper.readValue(productStr, new TypeReference<ProductDto>() {});
     }
 
     public ShoppingCartDto getShoppingCartDto() throws Exception {
-        String shoppingCartStr = mockMvc.perform(get("/rest/shoppingCart/get"))
-                                        .andExpect(status().isOk())
-                                        .andReturn()
-                                        .getResponse()
-                                        .getContentAsString();
+        String shoppingCartStr = given()
+                .when()
+                .get("/rest/shoppingCart/get")
+                .then()
+                .statusCode(200)
+                .extract()
+                .asString();
         return objectMapper.readValue(shoppingCartStr, new TypeReference<ShoppingCartDto>() {});
     }
 
     protected List<OrderDto> getOrdersByCustomer(int userId) throws Exception {
-        String ordersStr = mockMvc.perform(get("/rest/order/backOffice/list")
-                                          .param("customerId", String.valueOf(userId)))
-                                  .andExpect(status().isOk())
-                                  .andReturn()
-                                  .getResponse()
-                                  .getContentAsString();
+        String ordersStr = given()
+                .queryParam("customerId", String.valueOf(userId))
+                .when()
+                .get("/rest/order/backOffice/list")
+                .then()
+                .statusCode(200)
+                .extract()
+                .asString();
 
-        return objectMapper.readValue(ordersStr, new TypeReference<List<OrderDto>>() {});
+        return objectMapper.readValue(ordersStr, new TypeReference<>() {});
     }
 }

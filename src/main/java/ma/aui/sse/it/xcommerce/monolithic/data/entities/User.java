@@ -1,8 +1,9 @@
 package ma.aui.sse.it.xcommerce.monolithic.data.entities;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import io.quarkus.elytron.security.common.BcryptUtil;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
@@ -21,12 +22,15 @@ public class User extends BaseEntity {
     protected String password;
 
     @NotNull
+    @Column(name = "first_name")
     protected String firstName;
 
     @NotNull
+    @Column(name = "last_name")
     protected String lastName;
 
     @NotNull
+    @Column(name = "email_address")
     protected String emailAddress;
 
     @NotNull
@@ -38,7 +42,7 @@ public class User extends BaseEntity {
     public User(String username, String password, String firstName, String lastName, String emailAddress,
             String address) {
         this.username = username;
-        this.password = new BCryptPasswordEncoder().encode(password);
+        this.password = BcryptUtil.bcryptHash(password);
         this.firstName = firstName;
         this.lastName = lastName;
         this.emailAddress = emailAddress;

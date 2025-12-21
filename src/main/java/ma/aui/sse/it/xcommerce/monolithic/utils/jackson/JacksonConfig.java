@@ -1,13 +1,14 @@
 package ma.aui.sse.it.xcommerce.monolithic.utils.jackson;
 
 import com.fasterxml.jackson.databind.Module;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
 
-@Configuration
+@ApplicationScoped
 public class JacksonConfig {
 
-    @Bean
+    @Produces
+    @ApplicationScoped
     public Module jpaEntityBlockerModule() {
         return new JpaEntityBlockerModule();
     }
